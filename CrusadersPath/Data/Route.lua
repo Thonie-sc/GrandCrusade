@@ -12,14 +12,14 @@ local ADDON, ns = ...
 
 ns.Route = {
 	{
-		id = 1, min = 1, max = 4,
+		id = 1, min = 1, max = 6,
 		zone = "Tirisfal Glades", subzone = "Deathknell",
 		quests = {},
 		travel = "Your crusade begins in Deathknell, where the newly risen wake. The crypt lies just beyond the chapel - descend, and cleanse it.",
 		purge = "The crypt of Deathknell lies silent. Its restless dead trouble the living no more. Onward, crusader.",
 	},
 	{
-		id = 2, min = 4, max = 10,
+		id = 2, min = 6, max = 10,
 		zone = "Tirisfal Glades", subzone = "Agamand Mills",
 		quests = {},
 		travel = "March north and west along the road from Brill; the brooding Agamand farmsteads crown the hills. Carry the Light to them.",
