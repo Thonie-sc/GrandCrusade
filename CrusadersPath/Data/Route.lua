@@ -169,3 +169,42 @@ function ns.GetBracket(id)
 end
 
 ns.LastBracketId = #ns.Route
+
+-- ---------------------------------------------------------------------------
+-- Experience reckoning
+-- ---------------------------------------------------------------------------
+-- XP required to advance FROM level L to L+1 (Classic 1.12 values), L = 1..59.
+ns.XP_TO_NEXT = {
+	[1] = 400, [2] = 900, [3] = 1400, [4] = 2100, [5] = 2800,
+	[6] = 3600, [7] = 4500, [8] = 5400, [9] = 6500, [10] = 7600,
+	[11] = 8800, [12] = 10100, [13] = 11400, [14] = 12900, [15] = 14400,
+	[16] = 16000, [17] = 17700, [18] = 19400, [19] = 21300, [20] = 23200,
+	[21] = 25200, [22] = 27300, [23] = 29400, [24] = 31700, [25] = 34000,
+	[26] = 36400, [27] = 38900, [28] = 41400, [29] = 44300, [30] = 47400,
+	[31] = 50800, [32] = 54500, [33] = 58600, [34] = 62800, [35] = 67100,
+	[36] = 71600, [37] = 76100, [38] = 80800, [39] = 85700, [40] = 90700,
+	[41] = 95800, [42] = 101000, [43] = 106300, [44] = 111800, [45] = 117500,
+	[46] = 123200, [47] = 129100, [48] = 135100, [49] = 141200, [50] = 147500,
+	[51] = 153900, [52] = 160400, [53] = 167100, [54] = 173900, [55] = 180800,
+	[56] = 187900, [57] = 195000, [58] = 202300, [59] = 209800,
+}
+
+local function RoundUpToTen(n)
+	return math.ceil(n / 10) * 10
+end
+
+-- Estimate how many undead must fall to advance through an area, from the total
+-- XP across its level span and the average XP of a same-level mob in that span.
+-- Returns: mobsNeeded (rounded up to the nearest ten), totalXP, avgMobXP.
+function ns.MobsToPurge(bracket)
+	if not bracket then return 0, 0, 0 end
+	local totalXP = 0
+	for L = bracket.min, bracket.max - 1 do
+		totalXP = totalXP + (ns.XP_TO_NEXT[L] or 0)
+	end
+	-- Average mob: a same-level kill yields (level * 5 + 45) base XP in Classic.
+	local avgLevel = math.floor((bracket.min + bracket.max) / 2)
+	local avgMobXP = avgLevel * 5 + 45
+	if avgMobXP <= 0 then return 0, totalXP, avgMobXP end
+	return RoundUpToTen(totalXP / avgMobXP), totalXP, avgMobXP
+end

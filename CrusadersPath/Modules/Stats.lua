@@ -84,6 +84,7 @@ local function OnEvent(_, event)
 			if activeId then
 				local s = S()
 				s.kills[activeId] = (s.kills[activeId] or 0) + 1
+				if ns.GuidePanel then ns.GuidePanel:OnKill(activeId) end
 			end
 		end
 	elseif event == "PLAYER_DEAD" then
