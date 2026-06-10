@@ -9,7 +9,7 @@ ns.Notify = ns.RegisterModule(Notify)
 local BELL = "Sound\\Doodad\\BellTollAlliance.ogg"
 -- Custom bundled fanfare. Drop an .ogg (or .mp3) at this path; see Sounds\README.txt.
 -- PlaySoundFile fails silently if the file is absent, leaving the bell toll intact.
-local PURGE_SOUND = "Interface\\AddOns\\CrusadersPath\\Sounds\\PurgeFanfare.ogg"
+local PURGE_SOUND = "Interface\\AddOns\\CrusadersPath\\Sounds\\PurgeFanfare.mp3"
 
 local banner
 
