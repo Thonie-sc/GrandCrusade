@@ -62,6 +62,8 @@ local function OnLevelUp(newLevel)
 end
 
 local function OnZoneChanged()
+	-- Persist time spent so far into the area total whenever the crusader moves.
+	ns.Stats:FlushTime()
 	ns.Directions:Resolve()
 	ns.GuidePanel:Refresh()
 	if ns.Minimap then ns.Minimap:UpdateText() end

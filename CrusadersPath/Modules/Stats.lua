@@ -107,7 +107,8 @@ local function OnEvent(_, event)
 			local s = S()
 			s.deaths[activeId] = (s.deaths[activeId] or 0) + 1
 		end
-	elseif event == "PLAYER_LOGOUT" then
+	elseif event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD" then
+		-- Fold elapsed time into the area total before any logout / loading screen.
 		Stats:FlushTime()
 	end
 end
@@ -117,6 +118,13 @@ function Stats:OnEnable()
 	eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	eventFrame:RegisterEvent("PLAYER_DEAD")
 	eventFrame:RegisterEvent("PLAYER_LOGOUT")
+	eventFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 	eventFrame:SetScript("OnEvent", OnEvent)
+
+	-- Periodically fold elapsed time into the area total, so it survives even an
+	-- unclean exit (crash / alt-F4) and is up to date across days.
+	if C_Timer and C_Timer.NewTicker then
+		self.ticker = C_Timer.NewTicker(60, function() Stats:FlushTime() end)
+	end
 	-- Tracker:SetActive will be called from Tracker once it determines the bracket.
 end
