@@ -1,0 +1,20 @@
+## Interface: 11507
+## Title: Crusader's Path
+## Notes: A holy crusade across the undead lands - leveling guidance for the faithful, 1 to 60.
+## Author: Thonie-sc
+## Version: 1.0.0
+## SavedVariables: CrusadersPathDB
+## IconTexture: Interface\Icons\Spell_Holy_HolyBolt
+
+embeds.xml
+
+Data\Route.lua
+Core.lua
+Modules\Notify.lua
+Modules\Directions.lua
+Modules\GuidePanel.lua
+Modules\Stats.lua
+Modules\StatsPanel.lua
+Modules\Tracker.lua
+Modules\Minimap.lua
+Modules\Options.lua
