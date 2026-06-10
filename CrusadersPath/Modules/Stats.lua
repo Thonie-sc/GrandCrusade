@@ -48,6 +48,21 @@ function Stats:GetAreaStatus(id)
 	return a and a.status or nil
 end
 
+-- A ground counts as cleared whether the crusader purged it live ("purged") or
+-- was already above its level when the crusade began ("met" by prior valor).
+function Stats:IsCleared(id)
+	local s = self:GetAreaStatus(id)
+	return s == "purged" or s == "met"
+end
+
+function Stats:ClearedCount()
+	local n = 0
+	for _, b in ipairs(ns.Route) do
+		if self:IsCleared(b.id) then n = n + 1 end
+	end
+	return n
+end
+
 -- Count fulfilled quests across the whole route.
 function Stats:CountQuests()
 	local done, total = 0, 0
@@ -84,6 +99,7 @@ local function OnEvent(_, event)
 			if activeId then
 				local s = S()
 				s.kills[activeId] = (s.kills[activeId] or 0) + 1
+				if ns.GuidePanel then ns.GuidePanel:OnKill(activeId) end
 			end
 		end
 	elseif event == "PLAYER_DEAD" then
