@@ -35,16 +35,13 @@ local function OnClick(_, button)
 end
 
 local function OnTooltipShow(tooltip)
-	local purged = 0
-	for _, b in ipairs(ns.Route) do
-		if ns.Stats:GetAreaStatus(b.id) == "purged" then purged = purged + 1 end
-	end
+	local cleared = ns.Stats:ClearedCount()
 
 	tooltip:AddLine(ns.Gold("Crusader's Path"))
 	tooltip:AddLine(ns.Pale("Onward, champion of the Light."), 1, 1, 1)
 	tooltip:AddLine(" ")
 	tooltip:AddLine(ns.Pale("Holy ground: ") .. ns.Holy(CurrentSummary()))
-	tooltip:AddLine(ns.Pale("Grounds purged: ") .. ns.Gold(purged .. " / " .. ns.LastBracketId))
+	tooltip:AddLine(ns.Pale("Grounds cleared: ") .. ns.Gold(cleared .. " / " .. ns.LastBracketId))
 	tooltip:AddLine(" ")
 	tooltip:AddLine("|cffffff00Left-click|r  reveal the crusade guide")
 	tooltip:AddLine("|cffffff00Shift-click|r  the tally of your crusade")

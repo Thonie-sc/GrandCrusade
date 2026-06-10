@@ -45,10 +45,7 @@ end
 local function Populate()
 	scroll:ReleaseChildren()
 
-	local purged = 0
-	for _, b in ipairs(ns.Route) do
-		if ns.Stats:GetAreaStatus(b.id) == "purged" then purged = purged + 1 end
-	end
+	local cleared = ns.Stats:ClearedCount()
 	local qDone, qTotal = ns.Stats:CountQuests()
 
 	local heading = AceGUI:Create("Label")
@@ -57,7 +54,7 @@ local function Populate()
 	heading:SetText(ns.Gold("The tally of your crusade"))
 	scroll:AddChild(heading)
 
-	AddLine(ns.Pale(("Holy grounds purged: %s of %d"):format(ns.Gold(tostring(purged)), ns.LastBracketId)))
+	AddLine(ns.Pale(("Holy grounds cleared: %s of %d"):format(ns.Gold(tostring(cleared)), ns.LastBracketId)))
 	AddLine(ns.Pale(("Quests fulfilled: %s of %d"):format(ns.Gold(tostring(qDone)), qTotal)))
 	AddLine(ns.Pale(("Undead slain: %s   *   Times fallen: %s"):format(
 		ns.Gold(tostring((function() local k = 0 for _, b in ipairs(ns.Route) do k = k + ns.Stats:GetKills(b.id) end return k end)())),
