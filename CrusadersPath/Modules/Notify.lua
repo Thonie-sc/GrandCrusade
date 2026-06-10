@@ -1,5 +1,5 @@
 -- Crusader's Path :: Notify
--- The "area purged" banner and its holy clamor (bell toll + holy nova).
+-- The "area purged" banner and its holy clamor (bell toll + a custom fanfare).
 
 local ADDON, ns = ...
 
@@ -7,7 +7,9 @@ local Notify = {}
 ns.Notify = ns.RegisterModule(Notify)
 
 local BELL = "Sound\\Doodad\\BellTollAlliance.ogg"
-local HOLY = "Sound\\Spells\\HolyNova.ogg" -- best-effort; PlaySoundFile fails silently if absent
+-- Custom bundled fanfare. Drop an .ogg (or .mp3) at this path; see Sounds\README.txt.
+-- PlaySoundFile fails silently if the file is absent, leaving the bell toll intact.
+local PURGE_SOUND = "Interface\\AddOns\\CrusadersPath\\Sounds\\PurgeFanfare.ogg"
 
 local banner
 
@@ -56,12 +58,12 @@ local function BuildBanner()
 	return f
 end
 
--- Play the holy clamor. Bell toll first, holy nova a beat later.
+-- Play the holy clamor. Bell toll first, the custom fanfare a beat later.
 local function PlayClamor()
 	if not ns.db.profile.soundEnabled then return end
 	PlaySoundFile(BELL, "Master")
 	C_Timer.After(0.35, function()
-		PlaySoundFile(HOLY, "Master")
+		PlaySoundFile(PURGE_SOUND, "Master")
 	end)
 end
 
