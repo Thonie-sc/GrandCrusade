@@ -9,6 +9,7 @@ local Tracker = {}
 ns.Tracker = ns.RegisterModule(Tracker)
 
 local eventFrame
+local wasInArea = false
 
 -- Is the crusader standing in the zone of the given holy ground?
 -- Granularity is the zone (the active ground is chosen by level, not position),
@@ -52,6 +53,7 @@ local function OnLevelUp(newLevel)
 			ns.Notify:Purge(b.id)
 			c.currentBracket = math.min(c.currentBracket + 1, ns.LastBracketId)
 			ns.Stats:SetActive(c.currentBracket)
+			if ns.Milestones then ns.Milestones:OnPurge(b.id) end
 		else
 			break
 		end
@@ -67,10 +69,24 @@ local function OnZoneChanged()
 	ns.Directions:Resolve()
 	ns.GuidePanel:Refresh()
 	if ns.Minimap then ns.Minimap:UpdateText() end
+
+	local bracket = ns.GetBracket(ns.db.char.currentBracket)
+	local inArea = ns.IsInArea(bracket)
+
 	-- Reveal the guide when the crusader first sets foot on the active holy ground.
-	if ns.db.profile.autoShowPanel and ns.IsInArea(ns.GetBracket(ns.db.char.currentBracket)) then
+	if ns.db.profile.autoShowPanel and inArea then
 		ns.GuidePanel:Show()
 	end
+
+	-- Arrival cue: announce only on the false->true transition into the ground.
+	if inArea and not wasInArea and ns.db.profile.arrivalCues and bracket then
+		if SOUNDKIT and SOUNDKIT.IG_QUEST_LIST_OPEN then
+			PlaySound(SOUNDKIT.IG_QUEST_LIST_OPEN, "Master")
+		end
+		ns.Print(ns.Gold("You set foot upon " .. (bracket.subzone or bracket.zone)
+			.. ". Cleanse it in the Light's name."))
+	end
+	wasInArea = inArea
 end
 
 local function OnEvent(_, event, arg1)
@@ -87,6 +103,9 @@ function Tracker:OnEnable()
 	ns.Directions:Resolve()
 	ns.GuidePanel:Refresh()
 	if ns.Minimap then ns.Minimap:UpdateText() end
+
+	-- Seed arrival state so logging in inside the active ground is not announced.
+	wasInArea = ns.IsInArea(ns.GetBracket(ns.db.char.currentBracket))
 
 	eventFrame = CreateFrame("Frame")
 	eventFrame:RegisterEvent("PLAYER_LEVEL_UP")

@@ -28,6 +28,40 @@ function ns.Print(text)
 end
 
 -- ---------------------------------------------------------------------------
+-- Difficulty (con) reckoning
+-- ---------------------------------------------------------------------------
+-- The level at/below which a mob is trivial (grey) for the given player level.
+local function GreyLevel(playerLevel)
+	if playerLevel <= 5 then
+		return 0
+	elseif playerLevel <= 39 then
+		return playerLevel - math.floor(playerLevel / 10) - 5
+	elseif playerLevel <= 59 then
+		return playerLevel - math.floor(playerLevel / 5) - 1
+	else
+		return playerLevel - 9
+	end
+end
+
+-- Con of a mob level relative to the player. Returns r, g, b (0-1) and a name.
+-- Mirrors the classic creature difficulty scale.
+function ns.Con(mobLevel, playerLevel)
+	playerLevel = playerLevel or UnitLevel("player")
+	local diff = mobLevel - playerLevel
+	if diff >= 5 then
+		return 1.0, 0.10, 0.10, "deadly"          -- red
+	elseif diff >= 3 then
+		return 1.0, 0.50, 0.00, "tough"            -- orange
+	elseif diff >= -2 then
+		return 1.0, 0.82, 0.00, "even"             -- yellow
+	elseif mobLevel > GreyLevel(playerLevel) then
+		return 0.25, 0.75, 0.25, "easy"            -- green
+	else
+		return 0.55, 0.55, 0.55, "trivial"         -- grey
+	end
+end
+
+-- ---------------------------------------------------------------------------
 -- Database defaults
 -- ---------------------------------------------------------------------------
 local defaults = {
@@ -37,12 +71,16 @@ local defaults = {
 		progress = {},
 		questsDone = {},        -- questsDone[bracketId][questIndex] = true
 		directionsText = nil,   -- last set of directions shown in the Path frame
+		milestones = {},        -- announced milestone keys, to avoid repeats
 	},
 	profile = {
 		bannerEnabled = true,
 		soundEnabled = true,
 		autoShowPanel = true,
 		showDirections = true,
+		heatmapEnabled = true,
+		arrivalCues = true,
+		milestonesEnabled = true,
 		lockFrames = false,
 		minimap = { hide = false },             -- consumed by LibDBIcon
 		panelPoint = nil,                       -- { point, x, y }

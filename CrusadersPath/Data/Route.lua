@@ -208,3 +208,42 @@ function ns.MobsToPurge(bracket)
 	if avgMobXP <= 0 then return 0, totalXP, avgMobXP end
 	return RoundUpToTen(totalXP / avgMobXP), totalXP, avgMobXP
 end
+
+-- XP needed to advance from the player's current level/XP through to the top of
+-- the given bracket (its `max` level). Returns 0 once the player is at/over it.
+function ns.XPToBracketEnd(bracket)
+	if not bracket then return 0 end
+	local lvl = UnitLevel("player")
+	if lvl >= bracket.max then return 0 end
+	local total = 0
+	for L = lvl, bracket.max - 1 do
+		total = total + (ns.XP_TO_NEXT[L] or 0)
+	end
+	return math.max(0, total - (UnitXP("player") or 0))
+end
+
+-- ---------------------------------------------------------------------------
+-- Authored undead-camp data for the heat map (the API cannot read live mobs).
+-- AreaMap[bracketId] = { mapID = <uiMapID>, camps = { {x, y, level, density}, ... } }
+-- Coords are normalized 0-1 on that zone map (0,0 = top-left). Approximate; tunable.
+-- ---------------------------------------------------------------------------
+ns.AreaMap = {
+	[1]  = { mapID = 85, camps = { { x = 0.32, y = 0.74, level = 3,  density = 1.0 } } },
+	[2]  = { mapID = 85, camps = { { x = 0.46, y = 0.40, level = 8,  density = 1.1 } } },
+	[3]  = { mapID = 86, camps = { { x = 0.46, y = 0.30, level = 11, density = 1.0 } } },
+	[4]  = { mapID = 86, camps = { { x = 0.62, y = 0.31, level = 15, density = 1.0 } } },
+	[5]  = { mapID = 86, camps = { { x = 0.45, y = 0.66, level = 18, density = 1.0 } } },
+	[6]  = { mapID = 47, camps = { { x = 0.18, y = 0.52, level = 22, density = 1.2 } } },
+	[7]  = { mapID = 47, camps = { { x = 0.50, y = 0.55, level = 25, density = 1.0 } } },
+	[8]  = { mapID = 47, camps = {
+		{ x = 0.18, y = 0.52, level = 28, density = 1.0 },
+		{ x = 0.50, y = 0.55, level = 28, density = 1.0 } } },
+	[9]  = { mapID = 25, camps = { { x = 0.36, y = 0.70, level = 31, density = 1.0 } } },
+	[10] = { mapID = 36, camps = { { x = 0.45, y = 0.45, level = 34, density = 1.0 } } },
+	[11] = { mapID = 22, camps = { { x = 0.25, y = 0.55, level = 38, density = 1.0 } } },
+	[12] = { mapID = 22, camps = { { x = 0.50, y = 0.72, level = 43, density = 1.2 } } },
+	[13] = { mapID = 22, camps = { { x = 0.22, y = 0.55, level = 48, density = 1.1 } } },
+	[14] = { mapID = 22, camps = { { x = 0.40, y = 0.30, level = 53, density = 1.1 } } },
+	[15] = { mapID = 23, camps = { { x = 0.62, y = 0.55, level = 57, density = 1.2 } } },
+	[16] = { mapID = 23, camps = { { x = 0.70, y = 0.25, level = 59, density = 1.0 } } },
+}

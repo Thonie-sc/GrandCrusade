@@ -113,12 +113,16 @@ local function HideRows()
 	for _, row in ipairs(rows) do row:Hide() end
 end
 
--- The Light's estimate line for the given area.
+-- The Light's estimate line for the given area: a live pace reading + tally.
 local function EstimateText(bracket)
-	local needed = ns.MobsToPurge(bracket)
 	local slain = ns.Stats:GetKills(bracket.id)
-	return ns.Gold(("The Light foresees ~%d undead must fall here."):format(needed))
-		.. "\n" .. ns.Pale(("Slain upon this ground: %d of ~%d"):format(slain, needed))
+	local pace
+	if ns.Pace then
+		pace = ns.Pace:Summary(bracket)
+	else
+		pace = ns.Gold(("The Light foresees ~%d undead must fall here."):format(ns.MobsToPurge(bracket)))
+	end
+	return pace .. "\n" .. ns.Pale(("Slain upon this ground: %d"):format(slain))
 end
 
 -- Lay quests/directive into the content frame; returns the content height.
@@ -219,14 +223,16 @@ function GuidePanel:Refresh()
 	frame:SetHeight(math.max(MIN_H, y + contentH + BOTTOM_PAD))
 end
 
--- Cheap live refresh of just the estimate line as undead fall.
+-- Live refresh as undead fall (re-lays out so the pace line can change height).
 function GuidePanel:OnKill(id)
 	if not frame or not frame:IsShown() then return end
 	if id ~= displayedId then return end
-	local bracket = ns.GetBracket(id)
-	if bracket then
-		frame.estimate:SetText(EstimateText(bracket))
-	end
+	self:Refresh()
+end
+
+-- Refresh driven by the Pace module (xp updates / ticker).
+function GuidePanel:RefreshEstimate()
+	if frame and frame:IsShown() then self:Refresh() end
 end
 
 function GuidePanel:ApplyPosition()

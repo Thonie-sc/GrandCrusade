@@ -68,6 +68,33 @@ local optionsTable = {
 				},
 			},
 		},
+		auguries = {
+			type = "group", inline = true, order = 25, name = "Auguries of the Light",
+			args = {
+				heatmapEnabled = {
+					type = "toggle", order = 1, width = "full",
+					name = "Reveal the undead upon the map",
+					desc = "Mark the known undead camps of your holy ground on the world map, colored by their menace.",
+					get = get,
+					set = function(info, value)
+						set(info, value)
+						if ns.HeatMap then ns.HeatMap:Update() end
+					end,
+				},
+				milestonesEnabled = {
+					type = "toggle", order = 2, width = "full",
+					name = "Herald the crusade's milestones",
+					desc = "Announce a recap on login and the great tallies of undead slain as they are reached.",
+					get = get, set = set,
+				},
+				arrivalCues = {
+					type = "toggle", order = 3, width = "full",
+					name = "Hail each holy ground",
+					desc = "Sound a chime and a word of the Light when you first set foot upon the active ground.",
+					get = get, set = set,
+				},
+			},
+		},
 		deeds = {
 			type = "group", inline = true, order = 30, name = "Deeds",
 			args = {

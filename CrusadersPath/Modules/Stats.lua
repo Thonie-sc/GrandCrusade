@@ -91,6 +91,14 @@ function Stats:TotalTime()
 	return total
 end
 
+function Stats:TotalKills()
+	local total = 0
+	for _, bracket in ipairs(ns.Route) do
+		total = total + self:GetKills(bracket.id)
+	end
+	return total
+end
+
 -- Events ----------------------------------------------------------------------
 local function OnEvent(_, event)
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -99,7 +107,9 @@ local function OnEvent(_, event)
 			if activeId then
 				local s = S()
 				s.kills[activeId] = (s.kills[activeId] or 0) + 1
+				if ns.Pace then ns.Pace:NoteKill() end
 				if ns.GuidePanel then ns.GuidePanel:OnKill(activeId) end
+				if ns.Milestones then ns.Milestones:OnKill(activeId) end
 			end
 		end
 	elseif event == "PLAYER_DEAD" then

@@ -12,9 +12,12 @@ Data\Route.lua
 Core.lua
 Modules\Notify.lua
 Modules\Directions.lua
+Modules\Pace.lua
 Modules\GuidePanel.lua
 Modules\Stats.lua
 Modules\StatsPanel.lua
 Modules\Tracker.lua
+Modules\Milestones.lua
+Modules\HeatMap.lua
 Modules\Minimap.lua
 Modules\Options.lua
